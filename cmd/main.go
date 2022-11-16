@@ -31,7 +31,7 @@ func init() {
 }
 
 func main() {
-	db, err := badger.Open(badger.DefaultOptions("./.tmp/badger"))
+	db, err := badger.Open(badger.DefaultOptions("/tmp/badger"))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to open badger db: %v", err)
 		os.Exit(1)
@@ -63,11 +63,9 @@ func newTendermint(app abci.Application, configFile string) (*nm.Node, error) {
 	if err := viper.ReadInConfig(); err != nil {
 		return nil, errors.Wrap(err, "viper failed to read config file")
 	}
-
 	if err := viper.Unmarshal(config); err != nil {
 		return nil, errors.Wrap(err, "viper failed to unmarshal config")
 	}
-
 	if err := config.ValidateBasic(); err != nil {
 		return nil, errors.Wrap(err, "config is invalid")
 	}
@@ -102,7 +100,6 @@ func newTendermint(app abci.Application, configFile string) (*nm.Node, error) {
 		nm.DefaultDBProvider,
 		nm.DefaultMetricsProvider(config.Instrumentation),
 		logger)
-
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create new Tendermint node")
 	}
